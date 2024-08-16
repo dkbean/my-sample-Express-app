@@ -33,7 +33,10 @@ app.post("/upload", upload.single("file"), (req, res) => {
     Key: file.originalname, // You can customize the key (filename) as needed
     Body: fileStream,
   }
-  console.log("Uploaded file s3Params: ", s3Params)
+  console.log("Uploaded file s3Params: ", {
+    Bucket: s3Params.Bucket,
+    Key: s3Params.Key,
+  })
 
   s3.upload(s3Params, (err, data) => {
     if (err) {
