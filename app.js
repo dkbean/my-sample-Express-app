@@ -5,7 +5,7 @@ const fs = require("fs")
 const path = require("path")
 
 // Configure AWS SDK
-AWS.config.update({ region: "ap-northeast-1" }) // replace 'your-region' with your region
+AWS.config.update({ region: "ap-northeast-1" })
 const s3 = new AWS.S3()
 const dynamoDB = new AWS.DynamoDB.DocumentClient({ apiVersion: "2012-08-10" })
 
@@ -13,8 +13,8 @@ const app = express()
 const upload = multer({ dest: "uploads/" })
 const PORT = process.env.PORT || 80
 
-const S3_BUCKET = "cloud-internship-project3-s3" // updated S3 bucket name
-const DYNAMODB_TABLE = "S3MetadataTable" // updated DynamoDB table name
+const S3_BUCKET = "cloud-internship-project3-s3"
+const DYNAMODB_TABLE = "S3MetadataTable"
 
 // Serve static files from public directory
 app.use(express.static("public"))
@@ -30,7 +30,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
   const fileStream = fs.createReadStream(file.path)
   const s3Params = {
     Bucket: S3_BUCKET,
-    Key: s3Key, // You can customize the key (filename) as needed
+    Key: s3Key,
     Body: fileStream,
   }
   console.log("Uploaded file s3Params: ", {
@@ -50,14 +50,14 @@ app.post("/upload", upload.single("file"), (req, res) => {
         key: file.originalname, // 'key' is used as the primary key attribute
         filename: file.originalname, // Adding the filename attribute
         uploadTime: new Date().toISOString(),
-        s3Uri: s3Uri, // Store the S3 URI
+        s3Uri: s3Uri,
       },
     }
 
     console.log("Uploaded file metadata(DynamoDB): ", metadata)
     dynamoDB.put(metadata, (err) => {
       if (err) {
-        console.log("Failed to put to dynamoDB with err: ", err)
+        console.log("Failed to put to DynamoDB with err: ", err)
         return res.status(500).send("Error saving metadata to DynamoDB")
       }
 
@@ -67,46 +67,11 @@ app.post("/upload", upload.single("file"), (req, res) => {
   })
 })
 
-// Feature 2: Search file by name and download from S3
-app.get("/download", (req, res) => {
-  const fileName = req.query.fileName
-  if (!fileName) {
-    return res.status(400).send("File name is required.")
-  }
-
-  const searchParams = {
-    TableName: DYNAMODB_TABLE,
-    Key: {
-      key: fileName, // Use 'key' as the primary key attribute
-    },
-  }
-
-  dynamoDB.get(searchParams, (err, data) => {
-    if (err || !data.Item) {
-      return res.status(404).send("File not found.")
-    }
-
-    const s3Params = {
-      Bucket: S3_BUCKET,
-      Key: data.Item.s3Uri.split("/").pop(),
-    }
-
-    s3.getObject(s3Params, (err, fileData) => {
-      if (err) {
-        return res.status(500).send("Error downloading file from S3")
-      }
-
-      res.setHeader("Content-Disposition", `attachment; filename=${fileName}`)
-      res.send(fileData.Body)
-    })
-  })
-})
-
-// Feature 3: Get all files metadata
+// Feature 2: Get all files metadata
 app.get("/getfilesfromdb", (req, res) => {
   const scanParams = {
     TableName: DYNAMODB_TABLE,
-    ProjectionExpression: "filename", // Retrieve filename
+    ProjectionExpression: "filename",
   }
 
   dynamoDB.scan(scanParams, (err, data) => {
@@ -122,7 +87,7 @@ app.get("/getfilesfromdb", (req, res) => {
   })
 })
 
-// Feature 4: Get file content by filename
+// Feature 3: Get file content by filename
 app.get("/file-content/:fileName", (req, res) => {
   const fileName = req.params.fileName
 
@@ -148,7 +113,7 @@ app.get("/file-content/:fileName", (req, res) => {
         return res.status(500).send("Error downloading file from S3")
       }
 
-      res.send(fileData.Body.toString("utf-8")) // Send the file content as text
+      res.send(fileData.Body.toString("utf-8"))
     })
   })
 })

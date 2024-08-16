@@ -22,6 +22,7 @@ document
 
       if (response.ok) {
         alert("File uploaded successfully.")
+        fetchFileList() // Refresh the file list after upload
       } else {
         alert("Failed to upload the file.")
       }
