@@ -28,6 +28,7 @@
           fileItem.href = `/file-content/${encodeURIComponent(fileName)}`;
           fileItem.className = 'item';
           fileItem.textContent = fileName;
+          fileItem.target = '_blank'; // Open in a new tab
           fileListElement.appendChild(fileItem);
         });
       } catch (error) {
