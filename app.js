@@ -52,7 +52,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
     console.log("metadata: ", metadata)
     dynamoDB.put(metadata, (err) => {
       if (err) {
-        console.log("Failed to put to dynamoDB")
+        console.log("Failed to put to dynamoDB with err: ", err)
         return res.status(500).send("Error saving metadata to DynamoDB")
       }
 
