@@ -21,6 +21,7 @@ app.use(express.static("public"))
 
 // Feature 1: Upload file to S3 and save metadata to DynamoDB
 app.post("/upload", upload.single("file"), (req, res) => {
+  console.log("Start uploading file")
   const file = req.file
   if (!file) {
     return res.status(400).send("No file uploaded.")
