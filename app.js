@@ -43,7 +43,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
     const metadata = {
       TableName: DYNAMODB_TABLE,
       Item: {
-        fileName: file.originalname,
+        key: file.originalname, // 'key' is used as the primary key attribute
         uploadTime: new Date().toISOString(),
         s3Uri: data.Location,
       },
