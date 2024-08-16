@@ -21,7 +21,7 @@ app.use(express.static("public"))
 
 // Feature 1: Upload file to S3 and save metadata to DynamoDB
 app.post("/upload", upload.single("file"), (req, res) => {
-  console.log("Start uploading file")
+  // console.log("Start uploading file")
   const file = req.file
   if (!file) {
     return res.status(400).send("No file uploaded.")
@@ -30,7 +30,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
   const fileStream = fs.createReadStream(file.path)
   const s3Params = {
     Bucket: S3_BUCKET,
-    Key: file.filename, // You can customize the key (filename) as needed
+    Key: file.originalname, // You can customize the key (filename) as needed
     Body: fileStream,
   }
 
@@ -38,7 +38,6 @@ app.post("/upload", upload.single("file"), (req, res) => {
     if (err) {
       return res.status(500).send("Error uploading file to S3")
     }
-    console.log("Uploading file named: ", file.originalname)
 
     const metadata = {
       TableName: DYNAMODB_TABLE,
@@ -49,7 +48,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
       },
     }
 
-    console.log("metadata: ", metadata)
+    console.log("Uploaded file metadata: ", metadata)
     dynamoDB.put(metadata, (err) => {
       if (err) {
         console.log("Failed to put to dynamoDB with err: ", err)
