@@ -11,7 +11,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient()
 
 const app = express()
 const upload = multer({ dest: "uploads/" })
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 80
 
 const S3_BUCKET = "cloud-internship-project3-s3" // updated S3 bucket name
 const DYNAMODB_TABLE = "S3MetadataTable" // updated DynamoDB table name
