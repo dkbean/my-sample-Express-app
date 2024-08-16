@@ -7,7 +7,7 @@ const path = require("path")
 // Configure AWS SDK
 AWS.config.update({ region: "ap-northeast-1" }) // replace 'your-region' with your region
 const s3 = new AWS.S3()
-const dynamoDB = new AWS.DynamoDB.DocumentClient()
+const dynamoDB = new AWS.DynamoDB.DocumentClient({ apiVersion: "2012-08-10" })
 
 const app = express()
 const upload = multer({ dest: "uploads/" })
@@ -50,7 +50,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
     }
 
     console.log("metadata: ", metadata)
-    dynamoDB.putItem(metadata, (err) => {
+    dynamoDB.put(metadata, (err) => {
       if (err) {
         console.log("Failed to put to dynamoDB")
         return res.status(500).send("Error saving metadata to DynamoDB")
