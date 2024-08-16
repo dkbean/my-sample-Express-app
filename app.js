@@ -38,7 +38,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
     if (err) {
       return res.status(500).send("Error uploading file to S3")
     }
-    console.log("uploading file named: ", file.originalname)
+    console.log("Uploading file named: ", file.originalname)
 
     const metadata = {
       TableName: DYNAMODB_TABLE,
@@ -49,8 +49,10 @@ app.post("/upload", upload.single("file"), (req, res) => {
       },
     }
 
+    console.log("metadata: ", metadata)
     dynamoDB.put(metadata, (err) => {
       if (err) {
+        console.log("Failed to put to dynamoDB")
         return res.status(500).send("Error saving metadata to DynamoDB")
       }
 
