@@ -33,24 +33,23 @@ app.post("/upload", upload.single("file"), (req, res) => {
     Key: file.originalname, // You can customize the key (filename) as needed
     Body: fileStream,
   }
+  console.log("Uploaded file s3Params: ", metadata)
 
   s3.upload(s3Params, (err, data) => {
     if (err) {
       return res.status(500).send("Error uploading file to S3")
     }
 
-    const s3Uri = `s3://${S3_BUCKET}/${s3Key}` // Construct the S3 URI
-
     const metadata = {
       TableName: DYNAMODB_TABLE,
       Item: {
         key: file.originalname, // 'key' is used as the primary key attribute
         uploadTime: new Date().toISOString(),
-        s3Uri: s3Uri, // Store the S3 URI
+        s3Uri: data.Location,
       },
     }
 
-    console.log("Uploaded file metadata: ", metadata)
+    console.log("Uploaded file metadata(DynamoDB): ", metadata)
     dynamoDB.put(metadata, (err) => {
       if (err) {
         console.log("Failed to put to dynamoDB with err: ", err)
