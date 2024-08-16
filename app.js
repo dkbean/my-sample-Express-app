@@ -26,11 +26,12 @@ app.post("/upload", upload.single("file"), (req, res) => {
   if (!file) {
     return res.status(400).send("No file uploaded.")
   }
+  const s3Key = file.originalname // S3 key (filename in S3)
 
   const fileStream = fs.createReadStream(file.path)
   const s3Params = {
     Bucket: S3_BUCKET,
-    Key: file.originalname, // You can customize the key (filename) as needed
+    Key: s3Key, // You can customize the key (filename) as needed
     Body: fileStream,
   }
   console.log("Uploaded file s3Params: ", {
