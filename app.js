@@ -48,6 +48,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
       TableName: DYNAMODB_TABLE,
       Item: {
         key: file.originalname, // 'key' is used as the primary key attribute
+        filename: file.originalname, // Adding the filename attribute
         uploadTime: new Date().toISOString(),
         s3Uri: s3Uri, // Store the S3 URI
       },
@@ -105,7 +106,7 @@ app.get("/download", (req, res) => {
 app.get("/files", (req, res) => {
   const scanParams = {
     TableName: DYNAMODB_TABLE,
-    ProjectionExpression: "key", // Only retrieve the file name (key)
+    ProjectionExpression: "filename", // Retrieve filename
   }
 
   dynamoDB.scan(scanParams, (err, data) => {
@@ -116,7 +117,7 @@ app.get("/files", (req, res) => {
         .send("Error retrieving file metadata from DynamoDB.")
     }
 
-    const fileNames = data.Items.map((item) => item.key)
+    const fileNames = data.Items.map((item) => item.filename)
     res.json(fileNames)
   })
 })
