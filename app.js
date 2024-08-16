@@ -43,12 +43,13 @@ app.post("/upload", upload.single("file"), (req, res) => {
       return res.status(500).send("Error uploading file to S3")
     }
 
+    const s3Uri = `s3://${S3_BUCKET}/${s3Key}` // Construct the S3 URI
     const metadata = {
       TableName: DYNAMODB_TABLE,
       Item: {
         key: file.originalname, // 'key' is used as the primary key attribute
         uploadTime: new Date().toISOString(),
-        s3Uri: data.Location,
+        s3Uri: s3Uri, // Store the S3 URI
       },
     }
 
