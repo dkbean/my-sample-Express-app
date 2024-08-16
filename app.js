@@ -7,7 +7,7 @@ const path = require("path")
 // Configure AWS SDK
 AWS.config.update({ region: "ap-northeast-1" }) // replace 'your-region' with your region
 const s3 = new AWS.S3()
-const dynamoDB = new AWS.DynamoDB({ apiVersion: "2012-08-10" })
+const dynamoDB = new AWS.DynamoDB.DocumentClient()
 
 const app = express()
 const upload = multer({ dest: "uploads/" })
