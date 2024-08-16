@@ -103,7 +103,7 @@ app.get("/download", (req, res) => {
 })
 
 // Feature 3: Get all files metadata
-app.get("/files", (req, res) => {
+app.get("/getfilesfromdb", (req, res) => {
   const scanParams = {
     TableName: DYNAMODB_TABLE,
     ProjectionExpression: "filename", // Retrieve filename

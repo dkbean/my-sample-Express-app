@@ -19,7 +19,7 @@
   <script>
     async function fetchFileList() {
       try {
-        const response = await fetch('/files');
+        const response = await fetch('/getfilesfromdb'); // Updated to use the new endpoint
         const fileNames = await response.json();
 
         const fileListElement = document.getElementById('fileList');
