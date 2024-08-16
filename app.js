@@ -37,6 +37,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
     if (err) {
       return res.status(500).send("Error uploading file to S3")
     }
+    console.log("uploading file named: ", file.originalname)
 
     const metadata = {
       TableName: DYNAMODB_TABLE,
